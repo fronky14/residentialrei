@@ -4,10 +4,9 @@ import { useState } from "react";
 export default function ToolsPage() {
   const [activeTab, setActiveTab] = useState("mortgage");
 
-  function fmt(n) { return "$" + Math.round(n).toLocaleString(); }
-  function pct(n) { return n.toFixed(1) + "%"; }
+  function fmt(n: number) { return "$" + Math.round(n).toLocaleString(); }
+  function pct(n: number) { return n.toFixed(1) + "%"; }
 
-  // Mortgage state
   const [mPrice, setMPrice] = useState(350000);
   const [mDown, setMDown] = useState(20);
   const [mRate, setMRate] = useState(7.25);
@@ -22,7 +21,6 @@ export default function ToolsPage() {
   const mPITI = mPI + mTax / 12 + mIns / 12;
   const mTotalInt = mPI * mN - mLoan;
 
-  // Rental state
   const [rRent, setRRent] = useState(2200);
   const [rVac, setRVac] = useState(5);
   const [rMort, setRMort] = useState(1850);
@@ -38,7 +36,6 @@ export default function ToolsPage() {
   const rCOC = (rCF * 12) / rCash * 100;
   const rNOI = (rEGI - (rMgmtAmt + rRepairs + rOther)) * 12;
 
-  // Flip state
   const [fPurchase, setFPurchase] = useState(180000);
   const [fBuycost, setFBuycost] = useState(3500);
   const [fRehab, setFRehab] = useState(45000);
@@ -57,7 +54,6 @@ export default function ToolsPage() {
   const fAROI = fMonths > 0 ? fROI / fMonths * 12 : 0;
   const fMAO = fARV * 0.7 - fTotalRehab;
 
-  // BRRRR state
   const [bPurchase, setBPurchase] = useState(120000);
   const [bRehab, setBRehab] = useState(35000);
   const [bOther, setBOther] = useState(5000);
@@ -82,7 +78,7 @@ export default function ToolsPage() {
     { id: "brrrr", label: "BRRRR" },
   ];
 
-  const Field = ({ label, value, onChange, step = 1 }) => (
+  const Field = ({ label, value, onChange, step = 1 }: { label: string; value: number; onChange: (v: number) => void; step?: number }) => (
     <div className="mb-4">
       <label className="block text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">{label}</label>
       <input
@@ -95,20 +91,19 @@ export default function ToolsPage() {
     </div>
   );
 
-  const Result = ({ label, value, color = "" }) => (
+  const Result = ({ label, value, color = "" }: { label: string; value: string; color?: string }) => (
     <div className="flex justify-between items-baseline py-2 border-b border-white/10 last:border-0">
       <span className="text-sm text-white/60">{label}</span>
       <span className={`text-sm font-medium text-white ${color}`}>{value}</span>
     </div>
   );
 
-  const SectionLabel = ({ children }) => (
+  const SectionLabel = ({ children }: { children: React.ReactNode }) => (
     <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mt-5 mb-2">{children}</p>
   );
 
   return (
     <main className="min-h-screen bg-[#f5f4f0]">
-      {/* Nav */}
       <nav className="flex items-center justify-between px-8 py-5 bg-[#f5f4f0] border-b border-stone-200">
         <a href="/" className="text-sm font-semibold tracking-widest uppercase text-stone-800">Residential REI</a>
         <div className="flex items-center gap-6">
@@ -123,7 +118,6 @@ export default function ToolsPage() {
         <h1 className="text-3xl font-semibold text-stone-900 mb-2">Free Investor Tools</h1>
         <p className="text-stone-500 mb-8">Run the numbers before you run the deal.</p>
 
-        {/* Tabs */}
         <div className="flex gap-2 mb-8 flex-wrap">
           {tabs.map(tab => (
             <button
@@ -140,12 +134,8 @@ export default function ToolsPage() {
           ))}
         </div>
 
-        {/* Calculator Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-          {/* INPUTS */}
           <div className="bg-white rounded-2xl p-6 border border-stone-100">
-
             {activeTab === "mortgage" && (
               <>
                 <Field label="Purchase Price" value={mPrice} onChange={setMPrice} />
@@ -164,7 +154,6 @@ export default function ToolsPage() {
                 <Field label="Insurance / yr ($)" value={mIns} onChange={setMIns} />
               </>
             )}
-
             {activeTab === "rental" && (
               <>
                 <SectionLabel>Income</SectionLabel>
@@ -179,7 +168,6 @@ export default function ToolsPage() {
                 <Field label="Total Cash Invested ($)" value={rCash} onChange={setRCash} />
               </>
             )}
-
             {activeTab === "flip" && (
               <>
                 <SectionLabel>Purchase</SectionLabel>
@@ -196,7 +184,6 @@ export default function ToolsPage() {
                 <Field label="Agent + Selling Costs %" value={fSellPct} onChange={setFSellPct} step={0.5} />
               </>
             )}
-
             {activeTab === "brrrr" && (
               <>
                 <SectionLabel>Acquisition & Rehab</SectionLabel>
@@ -214,9 +201,7 @@ export default function ToolsPage() {
             )}
           </div>
 
-          {/* RESULTS */}
           <div className="bg-stone-900 rounded-2xl p-6 text-white">
-
             {activeTab === "mortgage" && (
               <>
                 <div className="text-center pb-5 mb-5 border-b border-white/10">
@@ -230,7 +215,6 @@ export default function ToolsPage() {
                 <Result label="Total interest paid" value={fmt(mTotalInt)} />
               </>
             )}
-
             {activeTab === "rental" && (
               <>
                 <div className="text-center pb-5 mb-5 border-b border-white/10">
@@ -249,7 +233,6 @@ export default function ToolsPage() {
                 </div>
               </>
             )}
-
             {activeTab === "flip" && (
               <>
                 <div className="text-center pb-5 mb-5 border-b border-white/10">
@@ -270,7 +253,6 @@ export default function ToolsPage() {
                 </div>
               </>
             )}
-
             {activeTab === "brrrr" && (
               <>
                 <div className="text-center pb-5 mb-5 border-b border-white/10">
