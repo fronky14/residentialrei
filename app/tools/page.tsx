@@ -1,6 +1,51 @@
 "use client";
 import { useState } from "react";
 
+const tabs = [
+  { id: "mortgage", label: "Mortgage" },
+  { id: "rental", label: "Rental Cash Flow" },
+  { id: "flip", label: "Flip / Rehab" },
+  { id: "brrrr", label: "BRRRR" },
+];
+
+const Field = ({ label, value, onChange, step = 1 }: { label: string; value: number; onChange: (v: number) => void; step?: number }) => {
+  const [localValue, setLocalValue] = useState(value.toString());
+  return (
+    <div className="mb-4">
+      <label className="block text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">{label}</label>
+      <input
+        type="text"
+        inputMode="decimal"
+        value={localValue}
+        onChange={e => {
+          setLocalValue(e.target.value);
+          const parsed = parseFloat(e.target.value);
+          if (!isNaN(parsed)) onChange(parsed);
+        }}
+        onBlur={e => {
+          const parsed = parseFloat(e.target.value);
+          if (!isNaN(parsed)) {
+            onChange(parsed);
+            setLocalValue(parsed.toString());
+          }
+        }}
+        className="w-full px-3 py-2 text-sm border border-stone-200 rounded-lg bg-white text-stone-900 outline-none focus:border-stone-400"
+      />
+    </div>
+  );
+};
+
+const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+  <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mt-5 mb-2">{children}</p>
+);
+
+const Result = ({ label, value, color = "" }: { label: string; value: string; color?: string }) => (
+  <div className="flex justify-between items-baseline py-2 border-b border-white/10 last:border-0">
+    <span className="text-sm text-white/60">{label}</span>
+    <span className={`text-sm font-medium text-white ${color}`}>{value}</span>
+  </div>
+);
+
 export default function ToolsPage() {
   const [activeTab, setActiveTab] = useState("mortgage");
 
@@ -70,37 +115,6 @@ export default function ToolsPage() {
   const bN = 30 * 12;
   const bMort = bR === 0 ? bLoan / bN : bLoan * (bR * Math.pow(1 + bR, bN)) / (Math.pow(1 + bR, bN) - 1);
   const bCF = bRent - bExp - bMort;
-
-  const tabs = [
-    { id: "mortgage", label: "Mortgage" },
-    { id: "rental", label: "Rental Cash Flow" },
-    { id: "flip", label: "Flip / Rehab" },
-    { id: "brrrr", label: "BRRRR" },
-  ];
-
-  const Field = ({ label, value, onChange, step = 1 }: { label: string; value: number; onChange: (v: number) => void; step?: number }) => (
-    <div className="mb-4">
-      <label className="block text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">{label}</label>
-      <input
-        type="number"
-        value={value}
-        step={step}
-        onChange={e => onChange(parseFloat(e.target.value) || 0)}
-        className="w-full px-3 py-2 text-sm border border-stone-200 rounded-lg bg-white text-stone-900 outline-none focus:border-stone-400"
-      />
-    </div>
-  );
-
-  const Result = ({ label, value, color = "" }: { label: string; value: string; color?: string }) => (
-    <div className="flex justify-between items-baseline py-2 border-b border-white/10 last:border-0">
-      <span className="text-sm text-white/60">{label}</span>
-      <span className={`text-sm font-medium text-white ${color}`}>{value}</span>
-    </div>
-  );
-
-  const SectionLabel = ({ children }: { children: React.ReactNode }) => (
-    <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mt-5 mb-2">{children}</p>
-  );
 
   return (
     <main className="min-h-screen bg-[#f5f4f0]">
