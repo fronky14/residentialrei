@@ -1,10 +1,35 @@
 "use client";
 import { useState } from "react";
+import { supabase } from "../lib/supabase";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  async function handleSignup() {
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: name }
+      }
+    });
+
+    if (error) {
+      setError(error.message);
+    } else {
+      setMessage("Check your email to confirm your account!");
+    }
+    setLoading(false);
+  }
 
   return (
     <main className="min-h-screen bg-[#f5f4f0] flex items-center justify-center px-4">
@@ -16,6 +41,16 @@ export default function SignupPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-stone-100 p-8">
+          {message && (
+            <div className="mb-5 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+              {message}
+            </div>
+          )}
+          {error && (
+            <div className="mb-5 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+              {error}
+            </div>
+          )}
           <div className="mb-5">
             <label className="block text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">Full Name</label>
             <input
@@ -46,8 +81,12 @@ export default function SignupPage() {
               className="w-full px-3 py-2 text-sm border border-stone-200 rounded-lg bg-white text-stone-900 outline-none focus:border-stone-400"
             />
           </div>
-          <button className="w-full bg-stone-900 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-stone-700 transition-colors">
-            Create Account
+          <button
+            onClick={handleSignup}
+            disabled={loading}
+            className="w-full bg-stone-900 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-stone-700 transition-colors disabled:opacity-50"
+          >
+            {loading ? "Creating account..." : "Create Account"}
           </button>
 
           <p className="text-center text-xs text-stone-400 mt-4">
@@ -55,12 +94,6 @@ export default function SignupPage() {
             <a href="/login" className="text-stone-600 underline underline-offset-2">Log in</a>
           </p>
         </div>
-
-        <p className="text-center text-xs text-stone-400 mt-6">
-          By signing up you agree to our{" "}
-          <a href="/terms" className="underline underline-offset-2">Terms</a> and{" "}
-          <a href="/privacy" className="underline underline-offset-2">Privacy Policy</a>
-        </p>
       </div>
     </main>
   );
